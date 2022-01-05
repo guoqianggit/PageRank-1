@@ -1,0 +1,72 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "conf",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_conf",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"PangeRank/contract/proposal.sol": "consensus"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"PangeRank/contract/proposal.sol": {
+			"keccak256": "0xd871875cc0388cd951267084f753245df73b31204476718bf4953fe3f2a6b259",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://cdeaf2382bb1a2b365543c56c000ed1b71b75b483dfce07e3e3d79628cc664d0",
+				"dweb:/ipfs/QmRYpEfUgZvMMGqP1RcrVBxiPyFnrFk6UjzSnHPz6pdBbr"
+			]
+		}
+	},
+	"version": 1
+}

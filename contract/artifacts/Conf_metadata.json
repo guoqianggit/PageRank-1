@@ -1,0 +1,198 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "award",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "consensus",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_pledge",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_vote",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_senator",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_consensus",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_proposal",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_award",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_punishment",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "pledge",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "proposal",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "punishment",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "senator",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "target",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "newLogic",
+						"type": "address"
+					}
+				],
+				"name": "upgrad",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "vote",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"PangeRank/contract/conf.sol": "Conf"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"PangeRank/contract/conf.sol": {
+			"keccak256": "0xfd1ac7862fa35ac099b752373a85ef3ae8872f35a9f25b477ec8879de05ef30f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://cc1aff096d215aa6a81772760a4efa796d1b4a9bdb0dbdb677b3787efa49fd85",
+				"dweb:/ipfs/QmV9Kv1FYmqWJNXDjuuLqAepuMyNYFV3vEVjzXZgCxZsjT"
+			]
+		}
+	},
+	"version": 1
+}
