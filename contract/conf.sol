@@ -18,24 +18,19 @@ contract Initialize {
 
 contract Conf is Initialize {
     address public pledge;
-    address public vote;
+    address public snapshoot;
+    address public upgrade;
     address public senator;
-    address public consensus;
-    address public proposal;
-    address public award;
-    address public punishment;
+    address public poc;
+    address public developer;
 
-    modifier onlyConsensus(){
-        require(msg.sender == consensus, "only consensus");
-        _;
-    }
-
-    function initialize(address _pledge, address _vote, address _senator, address _consensus, address _proposal, address _award, address _punishment) external init{
-        (pledge, vote, senator, consensus, proposal, award, punishment) = (_pledge, _vote, _senator, _consensus, _proposal, _award, _punishment);
+    function initialize(address _pledge, address _snapshoot, address _upgrade, address _senator, address _poc) external init{
+        (pledge, snapshoot, upgrade, senator, poc, developer) = (_pledge, _snapshoot, _upgrade, _senator, _poc, msg.sender);
     }
 
     //调试时测试，升级本合约情况是否合法。
-    function upgrad(address target, address newLogic) external onlyConsensus{
+    //pr需要增加人工审核流程（杜绝自动授权）
+    function upgrad(address target, address newLogic) external {
         upgradeable(target).upgrad(newLogic);
     }
 }

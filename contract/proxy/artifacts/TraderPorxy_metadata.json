@@ -1,0 +1,174 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "consensus",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "impl",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "preAdmin",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "newAdmin",
+						"type": "address"
+					}
+				],
+				"name": "AdminChanged",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "impl",
+						"type": "address"
+					}
+				],
+				"name": "Upgraded",
+				"type": "event"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "fallback"
+			},
+			{
+				"inputs": [],
+				"name": "admin",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newAdmin",
+						"type": "address"
+					}
+				],
+				"name": "changeAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "logic",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newLogic",
+						"type": "address"
+					}
+				],
+				"name": "upgrad",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"PangeRank/contract/porxy/confPorxy.sol": "TraderPorxy"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"PangeRank/contract/porxy/confPorxy.sol": {
+			"keccak256": "0xcecac37caf58fc5b2001b17c98fa679ebbaaeb7afb6f66c8e3fb99ba5cb7cc95",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e7a765aca863263de5250395765e212d2df0317c0e1cff0e2ce4aa1897b24afb",
+				"dweb:/ipfs/QmedoczVjTo5t2JxWHychDEqsS4SgydBgXEYhraBBWvEyz"
+			]
+		},
+		"PangeRank/contract/porxy/porxy.sol": {
+			"keccak256": "0x8331de3416e8f96245f14003c8525d82b48dcc6d5d1be00b7f18fad45d7f19c0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c22c92b95e051fb3db3babe9635a8345048b453c5dbf9db73287035c259c06d1",
+				"dweb:/ipfs/QmZubgFRaKR8M3nsSuKPktM9k9HcvuT9NE79fDJBVStjmk"
+			]
+		}
+	},
+	"version": 1
+}

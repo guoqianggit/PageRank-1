@@ -18,7 +18,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"PangeRank/contract/senator.sol": "Initialize"
+			"PangeRank/contract/proxy/proxy.sol": "StorageSlot"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -32,12 +32,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"PangeRank/contract/senator.sol": {
-			"keccak256": "0x2a73ca9bca327b7d8efba9752fffca0e009a02a5f2a8c3beec6054fc98488c5d",
+		"PangeRank/contract/proxy/proxy.sol": {
+			"keccak256": "0x8845684fa265fee00c4c79d50a63eef6fbcfb27a73d9978fbd2c2efbb83c4348",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://15f3b235bab1468e6e0b187c81ceaf06b35c7ce4ff3de794140972e6c1ad983b",
-				"dweb:/ipfs/QmVumhT8VEyLjL5wThgnTveQjHVDKY84giuT5UeHAp1yAg"
+				"bzz-raw://7293525340bd4d1d6e51346d296d86eee5f6309c501087100fc3ea2cc6ca2941",
+				"dweb:/ipfs/QmTCJaP1tEwkdXeenjKnexkv3YkFjKc6UxyEo28UrPkvjQ"
 			]
 		}
 	},

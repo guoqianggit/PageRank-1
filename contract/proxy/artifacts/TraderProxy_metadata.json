@@ -1,0 +1,174 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "consensus",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "impl",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "preAdmin",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "newAdmin",
+						"type": "address"
+					}
+				],
+				"name": "AdminChanged",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "impl",
+						"type": "address"
+					}
+				],
+				"name": "Upgraded",
+				"type": "event"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "fallback"
+			},
+			{
+				"inputs": [],
+				"name": "admin",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newAdmin",
+						"type": "address"
+					}
+				],
+				"name": "changeAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "logic",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newLogic",
+						"type": "address"
+					}
+				],
+				"name": "upgrad",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"localhost/PangeRank/contract/proxy/confProxy.sol": "TraderProxy"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"localhost/PangeRank/contract/proxy/confProxy.sol": {
+			"keccak256": "0x78b13969fc120181482ee7a802ce1dde251796bc039b7c175f4f9cb0626fc4fc",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://43d84dea3bf9524a973903478f96dc2b8d3940b4e45a7404a2f2f23bd1cc0814",
+				"dweb:/ipfs/QmebsY2yPTZLzrMLuXp1yAdpfq9DaJ3zrDCtATgzhzkUtL"
+			]
+		},
+		"localhost/PangeRank/contract/proxy/proxy.sol": {
+			"keccak256": "0x8845684fa265fee00c4c79d50a63eef6fbcfb27a73d9978fbd2c2efbb83c4348",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7293525340bd4d1d6e51346d296d86eee5f6309c501087100fc3ea2cc6ca2941",
+				"dweb:/ipfs/QmTCJaP1tEwkdXeenjKnexkv3YkFjKc6UxyEo28UrPkvjQ"
+			]
+		}
+	},
+	"version": 1
+}

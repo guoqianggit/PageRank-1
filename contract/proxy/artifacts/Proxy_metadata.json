@@ -6,8 +6,12 @@
 	"output": {
 		"abi": [
 			{
+				"stateMutability": "payable",
+				"type": "fallback"
+			},
+			{
 				"inputs": [],
-				"name": "conf",
+				"name": "admin",
 				"outputs": [
 					{
 						"internalType": "address",
@@ -19,17 +23,21 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
+				"inputs": [],
+				"name": "logic",
+				"outputs": [
 					{
 						"internalType": "address",
-						"name": "_conf",
+						"name": "",
 						"type": "address"
 					}
 				],
-				"name": "initialize",
-				"outputs": [],
-				"stateMutability": "nonpayable",
+				"stateMutability": "view",
 				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
 			}
 		],
 		"devdoc": {
@@ -45,7 +53,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"PangeRank/contract/proposal.sol": "consensus"
+			"PangeRank/contract/proxy/proxy.sol": "Proxy"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -59,12 +67,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"PangeRank/contract/proposal.sol": {
-			"keccak256": "0xd871875cc0388cd951267084f753245df73b31204476718bf4953fe3f2a6b259",
+		"PangeRank/contract/proxy/proxy.sol": {
+			"keccak256": "0x8845684fa265fee00c4c79d50a63eef6fbcfb27a73d9978fbd2c2efbb83c4348",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://cdeaf2382bb1a2b365543c56c000ed1b71b75b483dfce07e3e3d79628cc664d0",
-				"dweb:/ipfs/QmRYpEfUgZvMMGqP1RcrVBxiPyFnrFk6UjzSnHPz6pdBbr"
+				"bzz-raw://7293525340bd4d1d6e51346d296d86eee5f6309c501087100fc3ea2cc6ca2941",
+				"dweb:/ipfs/QmTCJaP1tEwkdXeenjKnexkv3YkFjKc6UxyEo28UrPkvjQ"
 			]
 		}
 	},

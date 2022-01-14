@@ -84,7 +84,7 @@ contract Proxy {
 }
 
 
-contract basePorxy is Proxy {
+contract baseProxy is Proxy {
     event Upgraded(address indexed impl);
     event AdminChanged(address preAdmin, address newAdmin);
 
