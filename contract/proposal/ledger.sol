@@ -1,121 +1,324 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0 ;
 
-pragma solidity ^0.8.0;
-
-interface Isenator{
-    function epochId() external view returns(uint);
-    function executerId() external view returns(uint);
-    function getExecuter() external view returns(address);
-    function isSenator(address) external view returns(bool);
+interface ILedger {
+    function updateNodes(address[] memory _nodeAddrs) external;
+    function updateLedger(
+        address[] calldata _userAddrs, 
+        uint256[] calldata _nonces,
+        address[] calldata _tokenAddrs, 
+        uint256[] calldata _amounts
+    )  external;
 }
 
-contract Initialize {
-    bool internal initialized;
+abstract contract Initializable {
+    /**
+     * @dev Indicates that the contract has been initialized.
+     */
+    bool private _initialized;
 
-    modifier init(){
-        require(!initialized, "initialized");
-        _;
-        initialized = true;
-    }
-}
+    /**
+     * @dev Indicates that the contract is in the process of being initialized.
+     */
+    bool private _initializing;
 
-contract ledger is Initialize {
-    address public senator;
+    /**
+     * @dev Modifier to protect an initializer function from being invoked twice.
+     */
+    modifier initializer() {
+        require(_initializing || !_initialized, "Initializable: contract is already initialized");
 
-    //提案状态:{等待，成功，失败}
-    enum Result{PENDING, SUCCESS, FAILED}
-
-     //记账提案
-    struct ledgerProposal{
-        uint epochId;                         //共识周期
-        address user;                         //用户
-        uint amount;                          //提取金额
-        address proposer;                     //提案人
-        uint proposalTime;                    //提案时间
-        uint assentor;                        //赞同者数量
-        uint unAssentor;                      //反对者数量
-        Result result;                        //共识结果
-    }
-
-
-    //账本
-    mapping (uint => ledgerProposal[]) public ledgers;
-    //提案序号
-    uint public nonce;
-
-    event SendLedgerProposal(uint indexed executerId, uint nonce, address user, uint amount);
-    
-    modifier onlyExecuter(){
-        require(Isenator(senator).getExecuter() == msg.sender, "access denied: only Executer");
-        _;
-    }
-
-    modifier onlySentor(){
-        require(Isenator(senator).isSenator(msg.sender), "access denied: only senator");
-        _;
-
-    }
-
-    function initialize(address _senator) external init{
-        senator=_senator;
-    }
-    
-    //发起快照提案
-    function sendLedgerProposal(address _user, uint _amount) external onlyExecuter{
-        uint _epochId = Isenator(senator).epochId();
-        uint _executerId = Isenator(senator).executerId();
-        if(ledgers[_executerId].length == 0){
-            //TODO:验证快照共识已经完成(若快照共识未完成责实时记账会出现差异)
-            //该验证交由PR节点进行验证
-            nonce = 0;
-        }else{
-            //TODO：验证上一笔记账共识已完成
-            require(ledgers[_executerId][nonce].result != Result.PENDING, "The latest proposal has no resolution");
-            nonce++;
+        bool isTopLevelCall = !_initializing;
+        if (isTopLevelCall) {
+            _initializing = true;
+            _initialized = true;
         }
 
-        ledgers[_executerId].push(ledgerProposal(
-            {
-                epochId: _epochId,
-                user: _user,
-                amount: _amount,
-                proposer: msg.sender,
-                proposalTime: block.timestamp,
-                assentor: 0,
-                unAssentor: 0,
-                result: Result.PENDING
+        _;
+
+        if (isTopLevelCall) {
+            _initializing = false;
+        }
+    }
+}
+
+contract Ledger is Initializable, ILedger{
+    using SafeMath for uint256;   
+    address[] nodeAddrList;
+    mapping(address => bool) public nodeAddrSta;
+    mapping(uint256 => NodeMsg) nodeMsg;
+    uint256 num;  
+    mapping(uint256 => mapping(address => bool)) status;
+    uint256 ledgerNum; 
+    mapping(uint256 => LedgerMsg)  ledgerIndex;
+    mapping(address => mapping(uint256 => uint256)) ledgerMsg;
+
+    event UpdateNodeAddr(address[] nodeAddrs); 
+    event UpdateLedger(address userAddr, uint256 nonce, address token, uint256 amount); 
+    event UpdateLedgerFail(address userAddr, uint256 nonce, address token, uint256 amount); 
+    
+    struct NodeMsg {
+        uint256  nodeNum;
+        uint256  nodeVoteNum;
+        mapping(address => uint256) nodeAddrIndex;
+        mapping(uint256 => address) nodeIndexAddr;
+        mapping(address => uint256) nodeAddrVotes;
+        mapping(address => bool) addrSta;
+        address[] voteAddrList;
+    }
+
+    struct DataMsg{
+        address token;                        
+        uint256 amount;
+    }
+
+    struct LedgerMsg{
+        uint256  nodeVoteNum;
+        mapping(uint256 => DataMsg)  dataFlag;
+        uint256  dataFlagNum;
+        mapping(uint256 => uint256) dataFlagIndex;
+        mapping(uint256 => uint256) dataIndexFlag;
+        mapping(uint256 => uint256) dataVotes;
+        mapping(address => bool) addrSta;
+        address[] voteAddrList;          
+        bool  consensusSta;       
+    }
+
+    function init(address[] memory _nodeAddrs) external initializer{
+        __Ledger_init_unchained(_nodeAddrs);
+    }
+
+    function __Ledger_init_unchained(address[] memory _nodeAddrs) internal initializer{
+        for (uint256 i = 0; i< _nodeAddrs.length; i++){
+            nodeAddrList.push(_nodeAddrs[i]);
+            nodeAddrSta[_nodeAddrs[i]] = true;
+        }
+    }
+ 
+    fallback() external{
+
+    }
+    
+    function updateLedger(
+        address[] calldata _userAddrs, 
+        uint256[] calldata _nonces,
+        address[] calldata _tokenAddrs, 
+        uint256[] calldata _amounts
+    ) override external {
+        address _sender = msg.sender;
+        uint256 len = _userAddrs.length;
+        require(len == _nonces.length, "Number of parameters does not match"); 
+        require(_nonces.length == _tokenAddrs.length, "Number of parameters does not match"); 
+        require(_tokenAddrs.length == _amounts.length , "Number of parameters does not match"); 
+        require(nodeAddrSta[_sender], "The caller is not the nodeAddr"); 
+        for (uint256 i=0; i < len; i++){
+             _updatLedger(_userAddrs[i],_nonces[i],_tokenAddrs[i],_amounts[i],_sender);
+        }
+    }
+
+    function updateNodes(address[] calldata _nodeAddrs) override external{
+        address _sender = msg.sender;
+        uint256 time = block.timestamp%86400;
+        uint256 day = block.timestamp/86400;
+        require(time >= 75600 && time <= 79200, "The call time is not within the specified range"); 
+        require(nodeAddrSta[_sender], "The caller is not the nodeAddr"); 
+        _verfyNodes(_nodeAddrs);
+        _updatNodeAddr(day, _nodeAddrs, _sender);
+    }
+function testUpdateNodes(address[] calldata _nodeAddrs) external{
+        uint256 day = block.timestamp/3600;
+        address _sender = msg.sender;
+        require(nodeAddrSta[_sender], "The caller is not the nodeAddr"); 
+        _verfyNodes(_nodeAddrs);
+        _updatNodeAddr(day, _nodeAddrs, _sender);
+    }
+
+    function _updatLedger(
+        address _userAddr, 
+        uint256 _nonce,
+        address _tokenAddr, 
+        uint256 _amount,
+        address _sender
+    ) internal{
+        uint256 _ledgerNum = ledgerMsg[_userAddr][_nonce];
+        LedgerMsg storage _ledgerMsg = ledgerIndex[_ledgerNum];
+        if(_ledgerNum == 0){
+            _ledgerNum = ++ledgerNum;
+            _ledgerMsg = ledgerIndex[_ledgerNum];
+            ledgerMsg[_userAddr][_nonce] = _ledgerNum;
+        }
+        require(!_ledgerMsg.addrSta[_sender], "The node address has already been voted"); 
+        _ledgerMsg.addrSta[_sender] = true;
+        _ledgerMsg.voteAddrList.push(_sender);
+        if(!_ledgerMsg.consensusSta){
+            bytes32 _dataFlagHash = keccak256(abi.encode(_tokenAddr, _amount));
+            uint256 _dataFlag = bytes32ToUint(_dataFlagHash);
+            DataMsg memory _dataMsg = DataMsg(_tokenAddr, _amount);
+            uint256 _dataFlagIndex = _ledgerMsg.dataFlagIndex[_dataFlag];
+            if (_dataFlagIndex == 0){
+                _dataFlagIndex = ++_ledgerMsg.dataFlagNum;
+                _ledgerMsg.dataFlagIndex[_dataFlag] = _dataFlagIndex;
+                _ledgerMsg.dataIndexFlag[_dataFlagIndex] = _dataFlag;
+                _ledgerMsg.dataFlag[_dataFlag] = _dataMsg;
             }
-        ));
-
-        emit SendLedgerProposal(_executerId, nonce, _user, _amount);
-    }
-    
-     //获取最新提案
-    function latestLedgerProposal() external view returns(uint epochId, address user, uint amount, address proposer, uint proposalTime, uint result){
-        ledgerProposal memory lp = ledgers[Isenator(senator).executerId()][nonce];
-        return(lp.epochId, lp.user, lp.amount, lp.proposer, lp.proposalTime, uint(lp.result));
-    }
-    
-    //表决提案
-    function vote(bool v) external onlySentor{
-        uint executerId = Isenator(senator).executerId(); 
-        require(ledgers[executerId][nonce].result == Result.PENDING,"Reached a consensus");
-        if(v) {
-            ledgers[executerId][nonce].assentor++;
-            if (ledgers[executerId][nonce].assentor>=6) ledgers[executerId][nonce].result = Result.SUCCESS;
-        }else{
-            ledgers[executerId][nonce].unAssentor++;
-            if (ledgers[executerId][nonce].unAssentor>=6) ledgers[executerId][nonce].result = Result.FAILED;
+            _ledgerMsg.dataVotes[_dataFlag]++;
+            uint256 _nodeVoteNum = ++_ledgerMsg.nodeVoteNum;
+            if(_nodeVoteNum > 6){
+                _dataRank(_userAddr, _nonce, _ledgerMsg);
+            }
         }
     }
 
-    //最新提案是否已完成表决
-    function isResolution() external view returns(bool){
-         uint executerId = Isenator(senator).executerId(); 
-         if (ledgers[executerId][nonce].result != Result.PENDING) {
-             return true;
-         }else{
-             return false;
-         }
+    function _dataRank(address _userAddr, uint256 _nonce, LedgerMsg storage _ledgerMsg) internal {
+        uint256 _dataFlagNum = _ledgerMsg.dataFlagNum;
+        for (uint256 i=1; i <= _dataFlagNum; i++){
+            for (uint256 j=i+1 ; j <= _dataFlagNum; j++){
+                uint256 nextData = _ledgerMsg.dataIndexFlag[j];
+                uint256 prefixData = _ledgerMsg.dataIndexFlag[i];
+                if (_ledgerMsg.dataVotes[prefixData] < _ledgerMsg.dataVotes[nextData]){
+                    _ledgerMsg.dataFlagIndex[prefixData] = j;
+                    _ledgerMsg.dataFlagIndex[nextData] = i;
+                    _ledgerMsg.dataIndexFlag[i] = nextData;
+                    _ledgerMsg.dataIndexFlag[j] = prefixData;
+                }
+            }
+        }
+        uint256 _dataFlag = _ledgerMsg.dataIndexFlag[1];
+        DataMsg memory _dataMsg = _ledgerMsg.dataFlag[_dataFlag];
+        if(_ledgerMsg.dataVotes[_dataFlag] > 6){
+            _ledgerMsg.consensusSta = true;
+            emit UpdateLedger(_userAddr, _nonce, _dataMsg.token, _dataMsg.amount);
+        }else if(_ledgerMsg.nodeVoteNum > 8){
+            uint256 _ledgerNum = ++ledgerNum;
+            ledgerMsg[_userAddr][_nonce] = _ledgerNum;
+            emit UpdateLedgerFail(_userAddr, _nonce, _dataMsg.token, _dataMsg.amount);
+        }
+    }
+
+    function _updatNodeAddr(uint256 _day, address[] calldata _nodeAddrs, address _sender) internal{
+        NodeMsg storage _nodeMsg = nodeMsg[_day];
+        require(!_nodeMsg.addrSta[_sender], "The node address has already been voted"); 
+        _nodeMsg.addrSta[_sender] = true;
+        for (uint256 i = 0; i< _nodeAddrs.length; i++){
+            address _nodeAddr = _nodeAddrs[i];
+            uint256 _nodeAddrIndex = _nodeMsg.nodeAddrIndex[_nodeAddr];
+            if (_nodeAddrIndex == 0){
+                _nodeAddrIndex = ++_nodeMsg.nodeNum;
+                _nodeMsg.nodeAddrIndex[_nodeAddr] = _nodeAddrIndex;
+                _nodeMsg.nodeIndexAddr[_nodeAddrIndex] = _nodeAddr;
+            }
+            _nodeMsg.nodeAddrVotes[_nodeAddr]++;
+        }
+        uint256 _nodeVoteNum = ++_nodeMsg.nodeVoteNum;
+        _nodeMsg.voteAddrList.push(_sender);
+        if(_nodeVoteNum > 6){
+            _nodeRank(_nodeMsg);
+        }
+    }
+
+    function _nodeRank(NodeMsg storage _nodeMsg) internal {
+        uint256 _nodeNum = _nodeMsg.nodeNum;
+        for (uint256 i=1; i <= _nodeNum; i++){
+            for (uint256 j=i+1 ; j <= _nodeNum; j++){
+                address nextAddr = _nodeMsg.nodeIndexAddr[j];
+                address prefixAddr = _nodeMsg.nodeIndexAddr[i];
+                if (_nodeMsg.nodeAddrVotes[prefixAddr] < _nodeMsg.nodeAddrVotes[nextAddr]){
+                    _nodeMsg.nodeAddrIndex[prefixAddr] = j;
+                    _nodeMsg.nodeAddrIndex[nextAddr] = i;
+                    _nodeMsg.nodeIndexAddr[i] = nextAddr;
+                    _nodeMsg.nodeIndexAddr[j] = prefixAddr;
+                }
+            }
+        }
+        for (uint256 i=0; i < nodeAddrList.length; i++){
+            nodeAddrSta[nodeAddrList[i]] = false;
+        }
+        delete nodeAddrList;
+        for (uint256 i=1; i < 12; i++){
+            nodeAddrList.push(_nodeMsg.nodeIndexAddr[i]);
+            nodeAddrSta[_nodeMsg.nodeIndexAddr[i]] = true;
+        }
+        emit UpdateNodeAddr(nodeAddrList);
+    }
+
+    function _verfyNodes(address[] memory _nodeAddrs) internal {
+        require(_nodeAddrs.length ==11, "The number of nodes must be 11"); 
+        uint256 _num= num++;
+        for(uint i= 0; i<_nodeAddrs.length; i++){
+            require(!status[_num][_nodeAddrs[i]], "A node can only submit once"); 
+            status[_num][_nodeAddrs[i]] = true;
+        }
+    }
+
+    function bytes32ToUint(bytes32 b) public pure returns (uint256){
+        uint256 number;
+        for(uint i= 0; i<b.length; i++){
+            number = number + uint8(b[i])*(2**(8*(b.length-(i+1))));
+        }
+        return  number;
+    }
+
+    function queryVotes(address userAddr, uint256 nonce) 
+        external 
+        view 
+        returns(
+            bool,
+            uint256,
+            address[] memory, 
+            address,
+            uint256, 
+            uint256)
+    {
+        uint256 _ledgerNum = ledgerMsg[userAddr][nonce];
+        LedgerMsg storage _ledgerMsg = ledgerIndex[_ledgerNum];
+        uint256 _dataFlag = _ledgerMsg.dataIndexFlag[1];
+        DataMsg memory _dataMsg = _ledgerMsg.dataFlag[_dataFlag];
+        uint256 _dataVotes = _ledgerMsg.dataVotes[_dataFlag];
+        return (_ledgerMsg.consensusSta, _ledgerMsg.nodeVoteNum, _ledgerMsg.voteAddrList, _dataMsg.token, _dataMsg.amount, _dataVotes);
+    }
+
+    function queryVoteNodes(uint256 _day)  external view returns(address[] memory){
+        uint256 calDay = block.timestamp/86400;
+        _day = calDay.sub(_day).add(1);
+        NodeMsg storage _nodeMsg = nodeMsg[_day];
+        return _nodeMsg.voteAddrList;
+    }
+
+    function queryNodes() external view returns(address[] memory){
+        address[] memory nodes = new address[](11);
+        if(nodeAddrList.length > 0){
+            for (uint256 i = 0; i < 11; i++) {
+                nodes[i] = nodeAddrList[i];
+            }
+        }
+        return nodes;
+    }
+}
+library SafeMath {
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+        uint256 c = a * b;
+        assert(c / a == b);
+        return c;
+    }
+
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        // assert(b > 0); // Solidity automatically throws when dividing by 0
+        uint256 c = a / b;
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+        return c;
+    }
+
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        assert(b <= a);
+        return a - b;
+    }
+
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        assert(c >= a);
+        return c;
     }
 }
